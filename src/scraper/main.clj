@@ -15,50 +15,14 @@
                       ;;[:td.subtext :a html/first-child]
                       })))
 
-(defn selector [hiccup]
-  (map html/text
-       (html/select (fetch-url *base-url*)
-                    #{ 
-                      hiccup
-                      }
-                    ))
-  )
-
-(defn hn-comments []
-  (selector [:td.title (:not(:a [:rel "nofollow"]))]))
-
-(defn hn-comments []
-  (map html/text
-       (html/select (fetch-url *base-url*)
-                    #{ 
-                      [:td.subtext (html/nth-child 3)]
-                      }
-                    )))
-(defn hn-points []
-  (map html/text
-       (html/select (fetch-url *base-url*)
-                    #{ 
-                      [:td.subtext (html/first-child 3)]
-                      }
-                    )))
-
-(defn hn-headlines []
-  (map html/text
-       (html/select (fetch-url *base-url*)
-                    #{ 
-                      [:td.title (:not(:a [:rel "nofollow"]))] 
-                      }
-                    )))               
-
-(defn print-headlines-and-points [sel-func]
-  (doseq [line (map (fn [[title]] 
-                      (str title)
+(defn print-headlines-and-points []
+  (doseq [line (map (fn [[title comments]] 
+                      (str title "\n" "\n")
+                      ;; { :title title
+                      ;;                :points points
+                      ;;                :author author 
+                      ;;                :comments (.replace "comments" "" comments)
+                      ;;                }
                       )
-                    (partition 1 (sel-func)))]
+                    (partition 2 (hn-headlines-and-points)))]
     (println line)))
-
-(defn run-all []
-  (print-headlines-and-points hn-headlines)
-  (print-headlines-and-points hn-comments)
-  (print-headlines-and-points hn-points)
-  )
